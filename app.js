@@ -47,7 +47,8 @@ function start (accessToken, localURL) {
 	    logger.info('Session ID: ' + sessionID)
 	    client.sendEvent('authorize', {
 	    	'path': localURL,
-	        'accessToken': sessionID
+	        'accessToken': accessToken,
+	        'sessionID': sessionID
 	    });
 	});
 
