@@ -134,7 +134,7 @@ function tryAuthorizing (tries) {
 		};
 
 		if (lastSession && lastSession.localURL) {
-			var urlString = 'Local URL (default: ' + lastSession.localURL + ')';
+			var urlString = 'Local URL (' + lastSession.localURL + '):';
 			urlPrompt.properties.localURL.description = urlString.green;
 		}
 
