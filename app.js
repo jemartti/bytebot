@@ -2,12 +2,25 @@
 
 var logger = console;
 var fs = require('fs');
+var exec = require('child_process').exec;
 var express = require('express');
 var request = require('request');
 var prompt = require('prompt');
 var pwuid = require('pwuid');
 var uuid = require('node-uuid');
 var WebSocket = require('ws');
+var inquirer = require('inquirer');
+var keypress = require('keypress');
+keypress(process.stdin);
+
+var blessed = require('blessed')
+  , program = blessed.program();
+
+var ui = null;
+
+function log (message) {
+	ui ? ui.log.write(message) : logger.info(message);
+}
 
 WebSocket.prototype.sendEvent = function (name, data) {
     function makeEvent (name, data) {
@@ -43,8 +56,8 @@ function start (accessToken, localURL) {
 	// open connection
 	client.on('open', function () {
 		var sessionID = uuid.v4();
-	    logger.info('Established connection to bytebot-remote, sending session information');
-	    logger.info('Session ID: ' + sessionID)
+	    log('Established connection to bytebot-remote, sending session information');
+	    log('Session ID: ' + sessionID)
 	    client.sendEvent('authorize', {
 	    	'path': localURL,
 	        'accessToken': accessToken,
@@ -53,15 +66,41 @@ function start (accessToken, localURL) {
 	});
 
 	client.onEvent('authorizationComplete', function (data) {
-		logger.info('Session started; building dummy subscription');
+		log('Session started; building dummy subscription');
+
+		process.stdin.on('keypress', function (ch, key) {
+			if (key && key.ctrl && key.name == 'c') {
+				logger.info('\nExiting');
+				process.exit(0);
+			} else if (key && !key.ctrl && key.name == 'k') {
+				var child = exec('open http://www.yahoo.com', function (error, stdout, stderr) {
+
+				});				
+			} else if (key && !key.ctrl && key.name == 'p') {
+				var child = exec('open http://www.yahoo.com', function (error, stdout, stderr) {
+
+				});
+			}
+
+			setTimeout(function () {
+				process.stdout.write("\033[2K\033[1D");
+			}, 0);
+		});
+
+		process.stdin.setRawMode(true);
+		process.stdin.resume();
+
+		program.hideCursor();
+		ui = new inquirer.ui.BottomBar();
+		ui.updateBottomBar('\n[K] - Configure, [P] - Open Control Panel, [Q] - Quit\n'.green.bold);
 	});
 
 	// when bytebot-remote asks for update from local tracker
 	client.onEvent('getResponse', function (data) {
-	    logger.info('Requesting update from local tracker ->');
-	    logger.info('\tPath:', data.path);
-	    logger.info('\tHeaders:', data.headers);
-	    logger.info('\tBody:', data.body);
+	    log('Requesting update from local tracker ->');
+	    log('\tPath:', data.path);
+	    log('\tHeaders:', data.headers);
+	    log('\tBody:', data.body);
 
 	    request.post({
 	        url: data.path,
@@ -71,7 +110,7 @@ function start (accessToken, localURL) {
 	        if (error) {
 	            // TODO
 	        } else {
-	        	logger.info('Received update, sending to bytebot-remote');
+	        	log('Received update, sending to bytebot-remote');
 	            client.sendEvent('receivedResponse', {
 	                'headers': response.headers,
 	                'body': body
@@ -97,10 +136,10 @@ console.log("\n\
 function tryAuthorizing (tries) {
 	tries = tries || 0;
 	if (tries >= 3) {
-		logger.info('Too many tries; exiting');
+		log('Too many tries; exiting');
 		process.exit();
 	} else if (tries > 0) {
-		logger.info('Invalid authorization information; try again\n');
+		log('Invalid authorization information; try again\n');
 	}
 
 	try {
@@ -123,7 +162,7 @@ function tryAuthorizing (tries) {
 	};
 
 	function connectWithAccessToken (accessToken) {
-		logger.info('Authorized; saving session information');
+		log('Authorized; saving session information');
 
 		var urlPrompt = {
 			properties: {
@@ -143,7 +182,7 @@ function tryAuthorizing (tries) {
 				results.localURL = lastSession.localURL;
 			}
 
-			logger.info('Pointing bytebot-local to ' + results.localURL);
+			log('Pointing bytebot-local to ' + results.localURL);
 			fs.writeFileSync(pwuid().dir + '/BytebotSession', JSON.stringify({'accessToken': accessToken, 'localURL': results.localURL}, undefined, 2));
 			start(accessToken, results.localURL);
 		});
@@ -172,12 +211,12 @@ function tryAuthorizing (tries) {
 				} else if (!error) {
 					tryAuthorizing(tries + 1);
 				} else {
-					logger.info('An unexpected error occurred; exiting');
+					log('An unexpected error occurred; exiting');
 				}
 			});
 		});
 	} else {
-		logger.info('Connecting with saved access token');
+		log('Connecting with saved access token');
 		connectWithAccessToken(lastSession.accessToken);
 	}
 }
