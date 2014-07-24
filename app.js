@@ -18,6 +18,89 @@ var blessed = require('blessed')
 
 var ui = null;
 
+var menus = {
+	'default': {
+		items: [
+			{
+				shortcut: 'P',
+				title: 'Control Panel'
+			},
+			{
+				shortcut: 'O',
+				title: 'Options'
+			},
+			{
+				shortcut: 'Q',
+				title: 'Quit'
+			}
+		]
+	},
+	'options': {
+		items: [
+			{
+				shortcut: 'C',
+				title: 'Configure'
+			},
+			{
+				shortcut: 'Shift-C',
+				title: 'Generate configuration'
+			},
+			{
+				shortcut: 'ESC',
+				title: 'Back'
+			}
+		]
+	}
+};
+
+var menuStack = [menus['default']];
+
+var menuHandler = function (ch, key) {
+
+	var currentMenu = menuStack[menuStack.length - 1];
+
+	if (currentMenu == menus['default']) {
+		if (key && ((key.ctrl && key.name == 'c') || key.name == 'q')) {
+			logger.info('\nExiting');
+			process.exit(0);
+		} else if (key && !key.ctrl && key.name == 'p') {
+			var child = exec('open http://www.yahoo.com', function (error, stdout, stderr) {
+
+			});				
+		} else if (key && !key.ctrl && key.name == 'o') {
+			menuStack.push(menus['options']);
+			renderMenu();
+		}
+	}
+
+	setTimeout(function () {
+		process.stdout.write("\033[2K\033[1D");
+	}, 0);
+}
+
+function renderMenu () {
+	if (!ui) {
+		process.stdin.on('keypress', menuHandler);
+
+		process.stdin.setRawMode(true);
+		process.stdin.resume();
+
+		program.hideCursor();
+		ui = new inquirer.ui.BottomBar();
+	}
+
+	var currentMenu = menuStack[menuStack.length - 1];
+
+	var items = [];
+
+	for (var i = 0; i < currentMenu.items.length; i++) {
+		var item = currentMenu.items[i];
+		items.push('('.white + item['shortcut'].green + ')'.white + ' ' + item['title'].green.bold);
+	};
+
+	ui.updateBottomBar('\n' + items.join('  ') + '\n');
+}
+
 function log (message) {
 	ui ? ui.log.write(message) : logger.info(message);
 }
@@ -56,7 +139,7 @@ function start (accessToken, localURL) {
 	// open connection
 	client.on('open', function () {
 		var sessionID = uuid.v4();
-	    log('Established connection to bytebot-remote, sending session information');
+	    log('Established connection to bytebot-remote; sending session information');
 	    log('Session ID: ' + sessionID)
 	    client.sendEvent('authorize', {
 	    	'path': localURL,
@@ -67,32 +150,7 @@ function start (accessToken, localURL) {
 
 	client.onEvent('authorizationComplete', function (data) {
 		log('Session started; building dummy subscription');
-
-		process.stdin.on('keypress', function (ch, key) {
-			if (key && key.ctrl && key.name == 'c') {
-				logger.info('\nExiting');
-				process.exit(0);
-			} else if (key && !key.ctrl && key.name == 'k') {
-				var child = exec('open http://www.yahoo.com', function (error, stdout, stderr) {
-
-				});				
-			} else if (key && !key.ctrl && key.name == 'p') {
-				var child = exec('open http://www.yahoo.com', function (error, stdout, stderr) {
-
-				});
-			}
-
-			setTimeout(function () {
-				process.stdout.write("\033[2K\033[1D");
-			}, 0);
-		});
-
-		process.stdin.setRawMode(true);
-		process.stdin.resume();
-
-		program.hideCursor();
-		ui = new inquirer.ui.BottomBar();
-		ui.updateBottomBar('\n[K] - Configure, [P] - Open Control Panel, [Q] - Quit\n'.green.bold);
+		renderMenu();
 	});
 
 	// when bytebot-remote asks for update from local tracker
@@ -110,7 +168,7 @@ function start (accessToken, localURL) {
 	        if (error) {
 	            // TODO
 	        } else {
-	        	log('Received update, sending to bytebot-remote');
+	        	log('Received update; sending to bytebot-remote');
 	            client.sendEvent('receivedResponse', {
 	                'headers': response.headers,
 	                'body': body
