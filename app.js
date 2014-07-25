@@ -157,7 +157,7 @@ function start (accessToken, localURL) {
     bot.localURL = localURL;
 
     // set up bytebot-local
-    bot.client = new WebSocket('ws://localhost:9979');
+    bot.client = new WebSocket('ws://trackers.one.co:9979');
 
     // open connection
     bot.client.on('open', function () {
@@ -281,6 +281,7 @@ function tryAuthorizing (tries) {
             server.post('/__config', function (req, res) {
                 log('Received request for configuration update; sending to bytebot-remote');
                 bot.client.sendEvent('setConfiguration', req.body);
+                res.send('Received');
             });
             server.listen(7001);
         });
