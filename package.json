@@ -7,6 +7,7 @@
     "bytebot": "app.js"
   },
   "dependencies": {
+    "blessed": "0.0.37",
     "colors": "~0.6.2",
     "express": "~4.6.1",
     "inquirer": "^0.5.1",
