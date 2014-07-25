@@ -8,7 +8,9 @@
   },
   "dependencies": {
     "blessed": "0.0.37",
+    "body-parser": "^1.5.0",
     "colors": "~0.6.2",
+    "cors": "^2.4.1",
     "express": "~4.6.1",
     "inquirer": "^0.5.1",
     "keypress": "^0.2.1",
