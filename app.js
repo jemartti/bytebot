@@ -156,9 +156,9 @@ function start (accessToken, localURL) {
 	// when bytebot-remote asks for update from local tracker
 	client.onEvent('getResponse', function (data) {
 	    log('Requesting update from local tracker ->');
-	    log('\tPath:', data.path);
-	    log('\tHeaders:', data.headers);
-	    log('\tBody:', data.body);
+	    log('\tPath: ' + data.path);
+	    log('\tHeaders: ' + data.headers);
+	    log('\tBody:' + data.body);
 
 	    request.post({
 	        url: data.path,
