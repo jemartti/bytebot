@@ -172,7 +172,7 @@ function start (accessToken, localURL) {
     });
 
     bot.client.onEvent('authorizationComplete', function (data) {
-        log('Session started; building dummy subscription');
+        log('Session started; open app to see your local tracker');
         renderMenu();
     });
 
