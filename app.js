@@ -64,7 +64,7 @@ var menuHandler = function (ch, key) {
 
     if (key && key.ctrl && key.name == 'c') {
         logger.info('\nExiting');
-        process.exit(0);    
+        process.exit(0);
     } else if (menuStack.length > 1 && key && !key.ctrl && key.name == 'escape') {
         menuStack.pop();
         renderMenu();
@@ -73,16 +73,16 @@ var menuHandler = function (ch, key) {
     if (currentMenu == menus['default']) {
         if (key && !key.ctrl && key.name == 'q') {
             logger.info('\nExiting');
-            process.exit(0);        
+            process.exit(0);
         } else if (key && !key.ctrl && key.name == 'o') {
             menuStack.push(menus['options']);
             renderMenu();
         } else if (key && !key.ctrl && key.name == 'd') {
-            var child = exec('open https://github.com/onehq/byte-api/blob/master/README.md', function (error, stdout, stderr) {});  
+            var child = exec('open https://github.com/onehq/byte-api/blob/master/README.md', function (error, stdout, stderr) {});
         }
     } else if (currentMenu == menus['options']) {
         if (key && !key.shift && key.name == 'c') {
-            var child = exec('open ' + bot.localURL + '/config#local', function (error, stdout, stderr) {});        
+            var child = exec('open ' + bot.localURL + '/config#local', function (error, stdout, stderr) {});
         }
     }
 
@@ -142,7 +142,7 @@ WebSocket.prototype.onEvent = function (name, handler) {
 
         this.on('message', function (message) {
             var data = JSON.parse(message);
-            
+
             if (this.handlers[data.name]) {
                 this.handlers[data.name](data.data);
             }
@@ -235,14 +235,18 @@ function tryAuthorizing (tries) {
 
     }
 
-    var authPrompt = {
+    var mobilePrompt = {
         properties: {
-            username: {
-                description: 'Username:'.green
-            },
-            password: {
-                hidden: true,
-                description: 'Password:'.green
+            mobile: {
+                description: 'Phone Number:'.green
+            }
+        }
+    };
+
+    var codePrompt = {
+        properties: {
+            code: {
+                description: 'Confirmation Code:'.green
             }
         }
     };
@@ -287,14 +291,42 @@ function tryAuthorizing (tries) {
         });
     }
 
-    if (!lastSession || !lastSession.accessToken) {
-        prompt.get(authPrompt, function (error, results) {
+    function promptForCode(mobileNumber) {
+        console.log("We sent a confirmation code to your phone.");
+        prompt.get(codePrompt, function (error, results) {
+            var code = results.code;
             request.post({
-                url: 'http://api.one.co:8080/api/token',
+                url: 'https://api.one.co/api/confirm',
                 form: {
-                    grant_type: 'password',
-                    username: results.username,
-                    password: results.password
+                    mobile: mobileNumber,
+                    code: code,
+                    client_id: 'ATWDMBB6W5YZIXS7SZQJNGDQ2FCCLJRR',
+                    client_secret: 'LWNMO23D5QDZJCTQYNDLYMSL2BN7H7XJ'
+                }
+            }, function (error, response, body) {
+                console.log(body);
+                if (body) {
+                    body = JSON.parse(body);
+                }
+                if (!error && body.data) {
+                    connectWithAccessToken(body.data.access_token);
+                } else if (body.error) {
+                    console.log(body.error.message + "\n");
+                    tryAuthorizing(tries + 1);
+                }else {
+                    log('An unexpected error occurred; exiting');
+                }
+            });
+        });
+    }
+
+    if (!lastSession || !lastSession.accessToken) {
+        prompt.get(mobilePrompt, function (error, results) {
+            var mobileNumber = results.mobile;
+            request.post({
+                url: 'https://api.one.co/api/login',
+                form: {
+                    mobile: mobileNumber,
                 },
                 auth: {
                     user: 'ATWDMBB6W5YZIXS7SZQJNGDQ2FCCLJRR',
@@ -304,12 +336,12 @@ function tryAuthorizing (tries) {
                 if (body) {
                     body = JSON.parse(body);
                 }
-
-                if (!error && body.access_token) {
-                    connectWithAccessToken(body.access_token);
-                } else if (!error) {
+                if (!error && body.data) {
+                    promptForCode(mobileNumber);
+                } else if (body.error) {
+                    console.log(body.error.message + "\n");
                     tryAuthorizing(tries + 1);
-                } else {
+                }else {
                     log('An unexpected error occurred; exiting');
                 }
             });
