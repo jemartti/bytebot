@@ -238,7 +238,7 @@ function tryAuthorizing (tries) {
     var mobilePrompt = {
         properties: {
             mobile: {
-                description: 'Phone Number:'.green
+                description: 'Mobile #:'.green
             }
         }
     };
@@ -246,7 +246,7 @@ function tryAuthorizing (tries) {
     var codePrompt = {
         properties: {
             code: {
-                description: 'Confirmation Code:'.green
+                description: 'Code:'.green
             }
         }
     };
@@ -291,8 +291,8 @@ function tryAuthorizing (tries) {
         });
     }
 
-    function promptForCode(mobileNumber) {
-        console.log("We sent a confirmation code to your phone.");
+    function promptForCode (mobileNumber) {
+        console.log("Enter your six digit verification code");
         prompt.get(codePrompt, function (error, results) {
             var code = results.code;
             request.post({
@@ -304,7 +304,6 @@ function tryAuthorizing (tries) {
                     client_secret: 'LWNMO23D5QDZJCTQYNDLYMSL2BN7H7XJ'
                 }
             }, function (error, response, body) {
-                console.log(body);
                 if (body) {
                     body = JSON.parse(body);
                 }
@@ -320,7 +319,8 @@ function tryAuthorizing (tries) {
         });
     }
 
-    if (!lastSession || !lastSession.accessToken) {
+    if (!lastSession || !lastSession.accessToken) {678
+        console.log("Enter your mobile number; we'll send a text to verify you");
         prompt.get(mobilePrompt, function (error, results) {
             var mobileNumber = results.mobile;
             request.post({
