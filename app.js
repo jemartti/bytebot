@@ -191,7 +191,7 @@ function start (accessToken, localURL) {
         request.post({
             url: data.path,
             headers: data.headers,
-            body: data.body
+            json: data.body
         }, function (error, response, body) {
             if (error) {
                 // TODO
