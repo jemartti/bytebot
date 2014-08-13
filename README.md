@@ -14,11 +14,11 @@ Bytebot allows you to view and test a Byte from any URL (local or live) directly
 
 If you're having problems, re-install [node.js](http://nodejs.org) and try again.
 
-#### Building a Byte
+## Next steps
 
 Check out the [Byte API Docs](https://github.com/onehq/byte-api) for more information on building a Byte.
 
-#### Support
+## Support
 
 If you have ANY questions hop into our IRC channel. We'll get back to you immediately.
 
