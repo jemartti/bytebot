@@ -304,8 +304,8 @@ function tryAuthorizing (tries) {
                 form: {
                     mobile: mobileNumber,
                     code: code,
-                    client_id: 'ATWDMBB6W5YZIXS7SZQJNGDQ2FCCLJRR',
-                    client_secret: 'LWNMO23D5QDZJCTQYNDLYMSL2BN7H7XJ'
+                    client_id: 'OM62PLTPTXTCPSYH2YCZ6FN2OI7MFM3S',
+                    client_secret: '2F75CDWHZKS4FPHUT3HRO6GMJ57UD43O'
                 }
             }, function (error, response, body) {
                 if (body) {
