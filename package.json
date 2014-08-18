@@ -1,6 +1,11 @@
 {
   "name": "bytebot",
-  "version": "0.0.1",
+  "version": "0.1.1",
+  "author": "Byte - Dom Hofmann, Jacob Robbins",
+  "bugs": {
+    "url": "https://github.com/onehq/bytebot/issues"
+  },
+  "homepage": "https://github.com/onehq/bytebot",
   "description": "CLI tool to forward update requests from Byte to local development environment",
   "preferGlobal": "true",
   "bin": {
@@ -20,5 +25,16 @@
     "pwuid": "~0.1.0",
     "request": "~2.37.0",
     "ws": "~0.4.31"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:onehq/bytebot.git"
+  },
+  "main": "app.js",
+  "devDependencies": {},
+  "keywords": [
+    "byte",
+    "bytebot"
+  ],
+  "license": "ISC"
 }
