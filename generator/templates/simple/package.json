@@ -1,0 +1,22 @@
+{
+    "author": "Byte <byte@one.co>",
+    "bugs": {
+        "url": "https://github.com/onehq/example-bytes/issues"
+    },
+    "dependencies": {
+        "express": "~4.8.3"
+    },
+    "description": "Hello world example byte for the Byte API",
+    "engines": {
+        "node": ">= 0.10.0"
+    },
+    "homepage": "https://github.com/onehq/example-bytes",
+    "license": "MIT",
+    "main": "hello-world.js",
+    "name": "hello-world",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/onehq/example-bytes.git"
+    },
+    "version": "0.0.1"
+}
