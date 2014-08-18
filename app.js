@@ -11,5 +11,15 @@ if (availableCommands.indexOf(command) < 0) {
     return -1;
 }
 
-var server = require('./server/serve');
-server.run();
+if (command == 'serve') {
+    var server = require('./server/serve');
+    server.run();
+}else if (command == 'generate') {
+    if (argv._.length < 2) {
+        console.log("useage: bytebot generate YourByteName");
+        return -1;
+    }
+    var targetName = argv._[1];
+    var generator = require('./generator/generate');
+    generator.create(targetName);
+}
