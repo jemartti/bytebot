@@ -1,40 +1,41 @@
 {
-  "name": "bytebot",
-  "version": "0.1.1",
-  "author": "Byte - Dom Hofmann, Jacob Robbins",
-  "bugs": {
-    "url": "https://github.com/onehq/bytebot/issues"
-  },
-  "homepage": "https://github.com/onehq/bytebot",
-  "description": "CLI tool to forward update requests from Byte to local development environment",
-  "preferGlobal": "true",
-  "bin": {
-    "bytebot": "app.js"
-  },
-  "dependencies": {
-    "blessed": "0.0.37",
-    "body-parser": "^1.6.5",
-    "colors": "~0.6.2",
-    "cors": "^2.4.1",
-    "express": "~4.8.5",
-    "inquirer": "^0.6.0",
-    "keypress": "^0.2.1",
-    "minimist": "^1.1.0",
-    "node-uuid": "~1.4.1",
-    "prompt": "~0.2.13",
-    "pwuid": "~1.0.0",
-    "request": "~2.40.0",
-    "ws": "~0.4.32"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:onehq/bytebot.git"
-  },
-  "main": "app.js",
-  "devDependencies": {},
-  "keywords": [
-    "byte",
-    "bytebot"
-  ],
-  "license": "ISC"
+    "author": "Byte - Dom Hofmann, Jacob Robbins",
+    "bin": {
+        "bytebot": "app.js"
+    },
+    "bugs": {
+        "url": "https://github.com/onehq/bytebot/issues"
+    },
+    "dependencies": {
+        "blessed": "0.0.37",
+        "body-parser": "^1.6.5",
+        "colors": "~0.6.2",
+        "cors": "^2.4.1",
+        "express": "~4.8.5",
+        "inquirer": "^0.6.0",
+        "keypress": "^0.2.1",
+        "minimist": "^1.1.0",
+        "node-uuid": "~1.4.1",
+        "prompt": "~0.2.13",
+        "pwuid": "~1.0.0",
+        "request": "~2.40.0",
+        "socket.io": "~1.0.6",
+        "ws": "~0.4.32"
+    },
+    "description": "CLI tool to forward update requests from Byte to local development environment",
+    "devDependencies": {},
+    "homepage": "https://github.com/onehq/bytebot",
+    "keywords": [
+        "byte",
+        "bytebot"
+    ],
+    "license": "ISC",
+    "main": "app.js",
+    "name": "bytebot",
+    "preferGlobal": "true",
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:onehq/bytebot.git"
+    },
+    "version": "0.1.1"
 }
