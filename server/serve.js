@@ -16,7 +16,6 @@ var inquirer = require('inquirer');
 
 
 var run = function() {
-
   var keypress = require('keypress');
   keypress(process.stdin);
 
@@ -46,11 +45,11 @@ var run = function() {
           title: 'Configure this byte'
         },
         /*
-            {
-                shortcut: 'Shift-C',
-                title: 'Generate configuration'
-            }
-            */
+        {
+          shortcut: 'Shift-C',
+          title: 'Generate configuration'
+        }
+        */
       ]
     }
   };
@@ -88,42 +87,42 @@ var run = function() {
     setTimeout(function() {
       process.stdout.write("\033[2K\033[1D");
     }, 0);
+  };
+
+  function renderMenu() {
+    if (!ui) {
+      process.stdin.on('keypress', menuHandler);
+
+      process.stdin.setRawMode(true);
+      process.stdin.resume();
+
+      program.hideCursor();
+      ui = new inquirer.ui.BottomBar();
+    }
+
+    // clone menu item so injected item isn't injected to original array every time
+    var currentMenu = JSON.parse(JSON.stringify(menuStack[menuStack.length - 1]));
+
+    if (menuStack.length > 1) {
+      currentMenu.items.push({
+        shortcut: 'ESC',
+        title: 'Back'
+      });
+    }
+
+    var items = [];
+
+    for (var i = 0; i < currentMenu.items.length; i++) {
+      var item = currentMenu.items[i];
+      items.push('('.white + item['shortcut'].green + ')'.white + ' ' + item['title'].green.bold);
+    };
+
+    ui.updateBottomBar('\n' + items.join('  ') + '\n');
   }
 
-    function renderMenu() {
-      if (!ui) {
-        process.stdin.on('keypress', menuHandler);
-
-        process.stdin.setRawMode(true);
-        process.stdin.resume();
-
-        program.hideCursor();
-        ui = new inquirer.ui.BottomBar();
-      }
-
-      // clone menu item so injected item isn't injected to original array every time
-      var currentMenu = JSON.parse(JSON.stringify(menuStack[menuStack.length - 1]));
-
-      if (menuStack.length > 1) {
-        currentMenu.items.push({
-          shortcut: 'ESC',
-          title: 'Back'
-        });
-      }
-
-      var items = [];
-
-      for (var i = 0; i < currentMenu.items.length; i++) {
-        var item = currentMenu.items[i];
-        items.push('('.white + item['shortcut'].green + ')'.white + ' ' + item['title'].green.bold);
-      };
-
-      ui.updateBottomBar('\n' + items.join('  ') + '\n');
-    }
-
-    function log(message) {
-      ui ? ui.log.write(message) : logger.info(message);
-    }
+  function log(message) {
+    ui ? ui.log.write(message) : logger.info(message);
+  }
 
   WebSocket.prototype.sendEvent = function(name, data) {
     function makeEvent(name, data) {
@@ -155,12 +154,13 @@ var run = function() {
   };
 
   function start(accessToken, localURL) {
-
     bot.localURL = localURL;
 
+    bot.client = require('socket.io-client')('http://jacob-marttinen-mbp.local:9979');
+    
     // set up bytebot-local
-    bot.client = new WebSocket('ws://trackers.one.co:9979');
-
+    //bot.client = new WebSocket('ws://jacob-marttinen-mbp.local:9979');
+    
     // open connection
     bot.client.on('open', function() {
       var sessionID = uuid.v4();
@@ -173,18 +173,18 @@ var run = function() {
       });
     });
 
-    bot.client.onEvent('authorizationComplete', function(data) {
+    bot.client.on('authorizationComplete', function(data) {
       log('Session started; open app to see your local tracker');
       renderMenu();
     });
 
-    bot.client.onEvent('configUpdated', function(data) {
+    bot.client.on('configUpdated', function(data) {
       log('Configuration was updated by bytebot-remote ->');
       log('\t' + util.inspect(data));
     });
 
     // when bytebot-remote asks for update from local tracker
-    bot.client.onEvent('getResponse', function(data) {
+    bot.client.on('getResponse', function(data) {
       log('Requesting update from local tracker ->');
       log('\tPath: ' + data.path);
       log('\tHeaders: ' + util.inspect(data.headers));
@@ -199,7 +199,7 @@ var run = function() {
           // TODO
         } else {
           log('Received update; sending to bytebot-remote');
-          bot.client.sendEvent('receivedResponse', {
+          bot.client.emit('receivedResponse', {
             'headers': response.headers,
             'body': body
           });
@@ -291,7 +291,7 @@ var run = function() {
         }));
         server.post('/__config', function(req, res) {
           log('Received request for configuration update; sending to bytebot-remote');
-          bot.client.sendEvent('setConfiguration', req.body);
+          bot.client.emit('setConfiguration', req.body);
           res.send('Received');
         });
         server.listen(7001);
@@ -303,7 +303,7 @@ var run = function() {
       prompt.get(codePrompt, function(error, results) {
         var code = results.code;
         request.post({
-          url: 'https://api.one.co/api/confirm',
+          url: 'http://jacob-marttinen-mbp.local:8080/api/confirm',
           form: {
             mobile: mobileNumber,
             code: code,
@@ -332,7 +332,7 @@ var run = function() {
       prompt.get(mobilePrompt, function(error, results) {
         var mobileNumber = results.mobile;
         request.post({
-          url: 'https://api.one.co/api/login',
+          url: 'http://jacob-marttinen-mbp.local:8080/api/login',
           form: {
             mobile: mobileNumber,
           },
@@ -359,9 +359,7 @@ var run = function() {
       connectWithAccessToken(lastSession.accessToken);
     }
   }
-
   tryAuthorizing();
-
 }
 
 module.exports = {
