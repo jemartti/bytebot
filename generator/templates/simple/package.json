@@ -1,23 +1,23 @@
 {
-  "author": "Byte <byte@one.co>",
-  "bugs": {
-    "url": "https://github.com/onehq/example-bytes/issues"
-  },
-  "dependencies": {
-    "body-parser": "^1.6.5",
-    "express": "^4.8.4"
-  },
-  "description": "Simple Byte",
-  "engines": {
-    "node": ">= 0.10.0"
-  },
-  "homepage": "https://github.com/onehq/example-bytes",
-  "license": "MIT",
-  "main": "index.js",
-  "name": "simple-byte",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/onehq/example-bytes.git"
-  },
-  "version": "1.0.0"
+    "author": "Byte <byte@one.co>",
+    "bugs": {
+        "url": "https://github.com/onehq/example-bytes/issues"
+    },
+    "dependencies": {
+        "body-parser": "^1.6.5",
+        "express": "^4.8.4"
+    },
+    "description": "Simple Byte",
+    "engines": {
+        "node": ">= 0.10.0"
+    },
+    "homepage": "https://github.com/onehq/example-bytes",
+    "license": "MIT",
+    "main": "index.js",
+    "name": "simple-byte",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/onehq/example-bytes.git"
+    },
+    "version": "1.0.0"
 }

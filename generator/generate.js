@@ -14,10 +14,10 @@ var create = function(targetName) {
   }
 
   var child = exec('cp -r ' + __dirname + '/templates/simple  ./' + targetName,
-    function (error, stdout, stderr) {
+    function(error, stdout, stderr) {
       if (error !== null) {
         console.log('error generating Byte: ' + error);
-      }else{
+      } else {
         console.log("Generated " + targetName + "\nNext run: cd " + targetName + " && npm update && node index.js");
       }
     });
@@ -25,5 +25,5 @@ var create = function(targetName) {
 }
 
 module.exports = {
-    create: create
+  create: create
 }
