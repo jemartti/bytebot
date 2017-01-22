@@ -1,10 +1,10 @@
 {
-    "author": "Byte - Dom Hofmann, Jacob Robbins",
+    "author": "Jacob Marttinen",
     "bin": {
         "bytebot": "app.js"
     },
     "bugs": {
-        "url": "https://github.com/onehq/bytebot/issues"
+        "url": "https://github.com/jemartti/bytebot/issues"
     },
     "dependencies": {
         "blessed": "0.0.37",
@@ -24,18 +24,18 @@
     },
     "description": "CLI tool to forward update requests from Byte to local development environment",
     "devDependencies": {},
-    "homepage": "https://github.com/onehq/bytebot",
+    "homepage": "https://github.com/jemartti/bytebot",
     "keywords": [
         "byte",
         "bytebot"
     ],
-    "license": "ISC",
+    "license": "MIT",
     "main": "app.js",
     "name": "bytebot",
     "preferGlobal": "true",
     "repository": {
         "type": "git",
-        "url": "git@github.com:onehq/bytebot.git"
+        "url": "git@github.com:jemartti/bytebot.git"
     },
     "version": "0.1.1"
 }
